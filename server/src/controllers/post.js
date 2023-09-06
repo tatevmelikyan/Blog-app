@@ -48,6 +48,21 @@ export const updatePost = async (req, res) => {
   }
 };
 
+export const deletePost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [post] = await req.user.getPosts({ where: { id } });
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+    await post.destroy();
+    res.status(200).send("Post successfully deleted!");
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
 export const likePost = async (req, res) => {
   const { id } = req.params;
   try {

@@ -18,4 +18,5 @@ const Post = sequelize.define("post", {
   },
 });
 
+console.log('post model', Post);
 export default Post;

@@ -84,6 +84,20 @@ export const likePost = async (req, res) => {
   }
 };
 
+export const unlikePost = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findByPk(id);
+    if (post === null) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    await req.user.removeLikedPost(post);
+    return res.status(200).json({ message: "Like successfully removed" });
+  } catch (err) {
+    res.status(500).send();
+  }
+}
+
 
 export const getLikedPosts = async (req, res) => {
   try {

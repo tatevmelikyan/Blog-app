@@ -3,20 +3,22 @@ import {
   createPost,
   deletePost,
   getLikedPosts,
-  getPost,
-  getPosts,
+  getPostDetails,
+  getAllPosts,
   likePost,
   unlikePost,
   updatePost,
+  getUserPosts,
 } from "../controllers/post.js";
 import { checkAuthenticated } from "../utils/checkAuthentication.js";
 
 const router = Router();
 
-router.get("/posts", getPosts);
-router.get("/posts/:id", getPost);
+router.get("/posts", getAllPosts);
+router.get("/posts/:id", getPostDetails);
 
-router.get("/liked-posts", checkAuthenticated, getLikedPosts)
+router.get("/user/posts", checkAuthenticated, getUserPosts);
+router.get("/liked-posts", checkAuthenticated, getLikedPosts);
 router.post("/posts", checkAuthenticated, createPost);
 router.post("/posts/:id/like", checkAuthenticated, likePost);
 router.delete("/posts/:id/unlike", checkAuthenticated, unlikePost);

@@ -45,6 +45,10 @@ app.get("/", (req, res) => {
 
 app.use(userRoutes);
 app.use(postRoutes);
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
 
 sequelize
   .authenticate()

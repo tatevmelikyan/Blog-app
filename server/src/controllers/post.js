@@ -83,3 +83,13 @@ export const likePost = async (req, res) => {
     res.status(500).send();
   }
 };
+
+
+export const getLikedPosts = async (req, res) => {
+  try {
+    const likedPosts = await req.user.getLikedPosts()
+    res.status(200).json(likedPosts)
+  } catch(err) {
+    res.status(500).json({message: err.message})
+  }
+}

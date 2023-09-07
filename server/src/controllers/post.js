@@ -1,4 +1,5 @@
 import Post from "../models/post.js";
+import { validatePostPayload } from "../utils/validator.js";
 
 export const getPosts = async (req, res) => {
   try {
@@ -20,15 +21,21 @@ export const getPost = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
+  try {
+    await validatePostPayload(req.body);
+  } catch (err) {
+    return res.status(403).send(err.details);
+  }
+
   const { title, content } = req.body;
   try {
     const newPost = await req.user.createPost({
       title,
       content,
     });
-    res.status(201).json(newPost);
+    res.status(201).json({ message: "Post successfully created!", newPost });
   } catch (err) {
-    res.status(500).json("Failed to create post");
+    res.status(500).json({ message: err.message });
   }
 };
 

@@ -3,22 +3,30 @@ import {
   getUsers,
   createUser,
   getUser,
-  updateUser,
+  updateUserName,
   deleteUser,
   loginUser,
   logoutUser,
+  changeUserPassword,
+  updateUserContactInfo,
 } from "../controllers/user.js";
 import { checkAuthenticated, checkNotAuthenticated } from "../utils/checkAuthentication.js";
 
 const router = Router();
 
 router.get("/users", getUsers);
-router.post("/users", createUser);
 router.get("/users/:id", getUser);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", deleteUser);
 
 router.post("/login", checkNotAuthenticated, loginUser);
 router.delete("/logout", checkAuthenticated, logoutUser);
+router.post("/users", checkNotAuthenticated, createUser);
+
+router.put("/user/update-name", checkAuthenticated, updateUserName);
+router.put("/user/update-contact-info", checkAuthenticated, updateUserContactInfo)
+router.put("/user/change-password", checkAuthenticated, changeUserPassword)
+
+router.delete("/user/delete", checkAuthenticated, deleteUser);
+
+
 
 export default router;

@@ -1,41 +1,61 @@
 import Joi from "joi";
 
-const validator = (schema) => (payload) => 
-schema.validateAsync(payload, {abortEarly: false});
-
+const validator = (schema) => (payload) => schema.validateAsync(payload, { abortEarly: false });
 
 const signupSchema = Joi.object({
-    firstName: Joi.string().max(50).pattern(new RegExp(/^[A-Za-z]+$/)).required(),
-    lastName: Joi.string().max(50).pattern(new RegExp(/^[A-Za-z]+$/)).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required(),
-    confirmPassword: Joi.string().required().valid(Joi.ref('password')),
-})
+  firstName: Joi.string()
+    .max(50)
+    .pattern(new RegExp(/^[A-Za-z]+$/))
+    .required(),
+  lastName: Joi.string()
+    .max(50)
+    .pattern(new RegExp(/^[A-Za-z]+$/))
+    .required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
+  confirmPassword: Joi.string().required().valid(Joi.ref("password")),
+});
 
 const userNameSchema = Joi.object({
-    firstName: Joi.string().max(50).pattern(new RegExp(/^[A-Za-z]+$/)).required(),
-    lastName: Joi.string().max(50).pattern(new RegExp(/^[A-Za-z]+$/)).required(),
-})
+  firstName: Joi.string()
+    .max(50)
+    .pattern(new RegExp(/^[A-Za-z]+$/))
+    .required(),
+  lastName: Joi.string()
+    .max(50)
+    .pattern(new RegExp(/^[A-Za-z]+$/))
+    .required(),
+});
 
 const userContactInfoSchema = Joi.object({
-    email: Joi.string().email().required(),
-})
+  email: Joi.string().email().required(),
+});
 
 const userPasswordSchema = Joi.object({
-    currentPassword: Joi.string().required(),
-    newPassword: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required(),
-    confirmPassword: Joi.string().required().valid(Joi.ref('newPassword'))
-})
+  currentPassword: Joi.string().required(),
+  newPassword: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
+  confirmPassword: Joi.string().required().valid(Joi.ref("newPassword")),
+});
 
 const postSchema = Joi.object({
-    title: Joi.string().max(255).required(),
-    content: Joi.string().required()
-})
+  title: Joi.string().max(255).required(),
+  content: Joi.string().required(),
+});
 
+export const validateSignupPayload = validator(signupSchema);
+export const validateUserNamePayload = validator(userNameSchema);
+export const validateUserContactInfoPayload = validator(userContactInfoSchema);
+export const validateUserPasswordPayload = validator(userPasswordSchema);
 
-export const validateSignupPayload = validator(signupSchema)
-export const validateUserNamePayload = validator(userNameSchema)
-export const validateUserContactInfoPayload = validator(userContactInfoSchema)
-export const validateUserPasswordPayload = validator(userPasswordSchema)
+export const validatePostPayload = validator(postSchema);
 
-export const validatePostPayload = validator(postSchema)
+export const validate = (validatorCb) => async (req, res, next) => {
+  try {
+    const validatedPayload = await validatorCb(req.body);
+    req.validatedPayload = validatedPayload;
+    console.log("validated payload", req.validatedPayload);
+    next();
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

@@ -2,6 +2,7 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
+import cors from 'cors'
 
 // sequelize
 import sequelize from "./db.js";
@@ -22,7 +23,7 @@ const PORT = process.env.PORT || 5000;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 
 const app = express();
-
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

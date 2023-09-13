@@ -11,18 +11,22 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  const {password, ...user} = req.user.dataValues
+ res.status(200).json({user})
+}
+
 export const createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.validatedPayload;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
+    await User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
     });
-    const { password: newUserPassword, ...newUserInfo } = newUser.dataValues;
-    res.status(200).json({ message: "User successfully created", user: newUserInfo });
+    res.status(200).json({ message: "User successfully created"});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -94,7 +98,8 @@ export const loginUser = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.status(200).json({ message: info });
+      const { password, ...userInfo } = user.dataValues;
+      return res.status(200).json({ message: info, user: userInfo });
     });
   })(req, res, next);
 };

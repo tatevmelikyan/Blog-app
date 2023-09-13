@@ -8,6 +8,7 @@ import {
   logoutUser,
   changeUserPassword,
   updateUserContactInfo,
+  getUser,
 } from "../controllers/user.js";
 import { checkAuthenticated, checkNotAuthenticated } from "../utils/checkAuthentication.js";
 
@@ -26,6 +27,8 @@ router.get("/users", getUsers);
 router.post("/login", checkNotAuthenticated, loginUser);
 router.delete("/logout", checkAuthenticated, logoutUser);
 router.post("/users", checkNotAuthenticated, validate(validateSignupPayload), createUser);
+
+router.get('/user', checkAuthenticated, getUser)
 
 router.put(
   "/user/update-name",

@@ -1,8 +1,23 @@
 import Post from "../models/post.js";
+import User from "../models/user.js";
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.findAll();
+    const posts = await Post.findAll({
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName"],
+          through: { attributes: [] },
+          as: "likedByUsers",
+        },
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName"],
+        }
+      ],
+    });
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
@@ -33,7 +48,20 @@ export const getUserPosts = async (req, res) => {
 
 export const getLikedPosts = async (req, res) => {
   try {
-    const likedPosts = await req.user.getLikedPosts();
+    const likedPosts = await req.user.getLikedPosts({
+      include: [
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName"],
+          through: { attributes: [] },
+          as: "likedByUsers",
+        },
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName"],
+        }
+      ],
+    });
     res.status(200).json(likedPosts);
   } catch (err) {
     res.status(500).json({ message: err.message });
